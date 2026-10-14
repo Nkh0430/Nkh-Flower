@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nkh.Flower | Premium Flower Boutique & Admin</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="text-slate-800 antialiased">
+
+    <!-- NAVIGATION BAR -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-pink-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" class="text-3xl font-extrabold tracking-tight text-slate-900">
+                Nkh<span class="text-pink-500">.Flower</span> 🌸
+            </a>
+
+            <!-- Search Bar -->
+            <div class="hidden md:flex items-center flex-1 max-w-md mx-12">
+                <div class="relative w-full">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-pink-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Цэцэг, баглаа хайх..." class="w-full pl-11 pr-4 py-2.5 bg-pink-50/50 border border-pink-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-pink-400">
+                </div>
+            </div>
+
+            <!-- Right Icons & Auth Buttons -->
+            <div class="flex items-center space-x-3">
+                <!-- User Profile / Login status -->
+                <div id="userProfileArea" class="hidden items-center space-x-3 bg-pink-50 px-4 py-2 rounded-full border border-pink-100">
+                    <span id="userRoleBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-pink-600 text-white">Admin</span>
+                    <span id="userNameDisplay" class="text-sm font-semibold text-slate-700">Хэрэглэгч</span>
+                    <button onclick="logout()" class="text-slate-400 hover:text-red-500 transition text-sm ml-2" title="Гарах">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+                
+                <div id="authButtons" class="flex items-center space-x-2">
+                    <button onclick="toggleLoginModal()" class="text-slate-700 hover:text-pink-600 text-sm font-semibold px-4 py-2 transition">
+                        Нэвтрэх
+                    </button>
+                    <button onclick="toggleRegisterModal()" class="bg-pink-600 hover:bg-pink-500 text-white text-sm font-semibold px-5 py-2.5 rounded-full transition shadow-md shadow-pink-600/20">
+                        Бүртгүүлэх
+                    </button>
+                </div>
+
+                <!-- Cart Button -->
+                <button onclick="toggleCart()" class="relative p-2.5 bg-pink-50 rounded-full hover:bg-pink-100 transition ml-2 border border-pink-100">
+                    <i class="fa-solid fa-bag-shopping text-pink-600 text-lg"></i>
+                    <span id="cartCount" class="absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-bold">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        
+        <!-- DASHBOARD PANEL (ADMIN & MANAGER ONLY) -->
+        <div id="dashboardPanel" class="hidden mb-10 bg-white border border-pink-100 rounded-3xl p-6 shadow-sm space-y-6">
+            <div class="flex items-center justify-between border-b border-pink-50 pb-4">
+                <h3 id="dashboardTitle" class="text-2xl font-bold text-slate-900">Админ хяналтын самбар</h3>
+                <span class="text-xs text-slate-500 bg-pink-50 px-3 py-1.5 rounded-full font-semibold">Эрх: <strong id="activeRoleText" class="text-pink-600">Admin</strong></span>
+            </div>
+
+            <!-- ADMIN: ADD PRODUCT -->
+            <div id="adminActionSection" class="hidden bg-pink-50/40 p-5 rounded-2xl border border-pink-100 space-y-4">
+                <h4 class="font-bold text-slate-800 text-sm flex items-center"><i class="fa-solid fa-plus-circle mr-2 text-pink-600"></i> Шинэ цэцэг бүтээгдэхүүн нэмэх</h4>
+                <form onsubmit="addNewProduct(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                    <input type="text" id="newProdName" required placeholder="Цэцгийн нэр" class="px-3 py-2 bg-white border border-pink-200 rounded-xl text-xs outline-none">
+                    <select id="newProdCat" class="px-3 py-2 bg-white border border-pink-200 rounded-xl text-xs outline-none">
+                        <option value="bouquet">Баглаа (Bouquet)</option>
+                        <option value="roses">Сарнай (Roses)</option>
+                        <option value="potted">Савтай цэцэг (Potted)</option>
+                        <option value="gifts">Бэлэг дурсгал (Gifts)</option>
+                    </select>
+                    <input type="number" id="newProdPrice" required placeholder="Үнэ (₮)" class="px-3 py-2 bg-white border border-pink-200 rounded-xl text-xs outline-none">
+                    <input type="text" id="newProdImg" required placeholder="Зургийн URL (Unsplash)" class="px-3 py-2 bg-white border border-pink-200 rounded-xl text-xs outline-none">
+                    <button type="submit" class="sm:col-span-4 bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2.5 rounded-xl text-xs transition">Каталогт цэцэг нэмэх</button>
+                </form>
+            </div>
+
+            <!-- ALL ORDERS & DELIVERY TRACKING (Admin & Manager view) -->
+            <div class="space-y-3">
+                <h4 class="font-bold text-slate-800 text-sm flex items-center"><i class="fa-solid fa-truck-fast mr-2 text-pink-600"></i> Бүх захиалга болон хүргэлтийн явц</h4>
+                <div class="overflow-x-auto border border-pink-100 rounded-2xl">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-pink-50 text-slate-700 uppercase">
+                            <tr>
+                                <th class="p-3">Захиалагч</th>
+                                <th class="p-3">Хаяг, Цаг</th>
+                                <th class="p-3">Төлбөр</th>
+                                <th class="p-3">Төлөв (Status)</th>
+                                <th class="p-3">Үйлдэл</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminOrderTableBody" class="divide-y divide-pink-100 bg-white"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- RETURN REQUESTS APPROVAL SECTION (Admin & Manager view) -->
+            <div class="space-y-3 pt-4 border-t border-pink-50">
+                <h4 class="font-bold text-slate-800 text-sm flex items-center"><i class="fa-solid fa-rotate-left mr-2 text-pink-600"></i> Бараа буцаах хүсэлтүүд</h4>
+                <div class="overflow-x-auto border border-pink-100 rounded-2xl">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-pink-50 text-slate-700 uppercase">
+                            <tr>
+                                <th class="p-3">Харилцагч</th>
+                                <th class="p-3">Захиалга / Шалтгаан</th>
+                                <th class="p-3">Төлөв</th>
+                                <th class="p-3">Админы зөвшөөрөл</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminReturnTableBody" class="divide-y divide-pink-100 bg-white"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- CUSTOMER RETURN REQUEST MODAL -->
+        <div id="returnOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden transition-opacity" onclick="toggleReturnModal()"></div>
+        <div id="returnModal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-3xl shadow-2xl z-50 hidden p-8 space-y-4">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xl font-bold text-slate-900">Бараа буцаах хүсэлт гаргах</h3>
+                <button onclick="toggleReturnModal()" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form onsubmit="submitReturnRequest(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Буцаах цэцэг / Баглааны нэр</label>
+                    <input type="text" id="returnItemName" required placeholder="Жишээ: Pink Harmony Баглаа" class="w-full px-3 py-2 bg-pink-50/50 border border-pink-200 rounded-xl text-xs outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Буцаах болсон шалтгаан</label>
+                    <textarea id="returnReason" required rows="3" placeholder="Шалтгаанаа дэлгэрэнгүй бичнэ үү..." class="w-full px-3 py-2 bg-pink-50/50 border border-pink-200 rounded-xl text-xs outline-none"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-3 rounded-xl text-xs transition shadow-md">Хүсэлт илгээх</button>
+            </form>
+        </div>
+
+        <!-- HERO BANNER -->
+        <div class="bg-gradient-to-r from-pink-900 via-pink-800 to-rose-950 rounded-3xl p-8 md:p-12 text-white mb-12 shadow-xl flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
+            <div class="max-w-lg mb-6 md:mb-0 z-10">
+                <span class="bg-pink-500/30 text-pink-200 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider border border-pink-400/30">Шинэхэн цэцгийн цуглуулга</span>
+                <h1 class="text-4xl md:text-5xl font-bold mt-4 mb-4">Хайр халамжийг цэцгээр илэрхийлээрэй</h1>
+                <p class="text-pink-100/80 text-sm md:text-base mb-6">Хамгийн чамин тансаг баглаа, өрөөний болон бэлэг дурсгалын цэцгүүдийг Nkh.Flower-с түргэн шуурхай захиалаарай.</p>
+                <div class="flex gap-3">
+                    <a href="#shop" class="bg-white text-pink-700 hover:bg-pink-50 font-semibold px-8 py-3 rounded-full transition shadow-lg inline-block text-sm">Цэцэг сонгох</a>
+                    <button onclick="toggleReturnModal()" class="bg-pink-600/50 hover:bg-pink-600 text-white font-semibold px-6 py-3 rounded-full transition border border-pink-400/40 text-sm">Буцаалт хүсэх</button>
+                </div>
+            </div>
+            <div class="w-full md:w-1/2 flex justify-center z-10">
+                <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=600&q=80" alt="Flower Boutique" class="w-72 h-72 md:w-80 md:h-80 object-cover rounded-full border-4 border-white/20 shadow-2xl">
+            </div>
+        </div>
+
+        <!-- CATEGORY TABS -->
+        <div id="shop" class="flex items-center justify-between mb-8 flex-wrap gap-4 border-b border-pink-100 pb-4">
+            <h2 class="text-2xl font-bold text-slate-900">Цэцгийн ангилал</h2>
+            <div class="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0" id="categoryTabs">
+                <button onclick="filterCategory('all')" class="cat-btn px-5 py-2 rounded-full text-sm font-semibold bg-pink-600 text-white transition shadow-sm">Бүгд</button>
+                <button onclick="filterCategory('bouquet')" class="cat-btn px-5 py-2 rounded-full text-sm font-semibold bg-white text-slate-600 hover:bg-pink-50 border border-pink-100 transition">Баглаа</button>
+                <button onclick="filterCategory('roses')" class="cat-btn px-5 py-2 rounded-full text-sm font-semibold bg-white text-slate-600 hover:bg-pink-50 border border-pink-100 transition">Сарнай</button>
+                <button onclick="filterCategory('potted')" class="cat-btn px-5 py-2 rounded-full text-sm font-semibold bg-white text-slate-600 hover:bg-pink-50 border border-pink-100 transition">Савтай цэцэг</button>
+                <button onclick="filterCategory('gifts')" class="cat-btn px-5 py-2 rounded-full text-sm font-semibold bg-white text-slate-600 hover:bg-pink-50 border border-pink-100 transition">Бэлэг дурсгал</button>
+            </div>
+        </div>
+
+        <!-- PRODUCTS GRID -->
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+    </main>
+
+    <!-- LOGIN MODAL -->
+    <div id="loginOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden transition-opacity" onclick="toggleLoginModal()"></div>
+    <div id="loginModal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-3xl shadow-2xl z-50 hidden p-8">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-2xl font-bold text-slate-900">Системд нэвтрэх</h3>
+            <button onclick="toggleLoginModal()" class="text-slate-400 hover:text-slate-700 transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase mb-2">И-мэйл хаяг</label>
+                <input type="email" id="loginEmail" required placeholder="name@example.com" class="w-full px-4 py-3 bg-pink-50/50 border border-pink-100 rounded-xl text-sm focus:ring-2 focus:ring-pink-400 outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Нууц үг</label>
+                <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full px-4 py-3 bg-pink-50/50 border border-pink-100 rounded-xl text-sm focus:ring-2 focus:ring-pink-400 outline-none">
+            </div>
+            <div class="flex justify-end">
+                <button type="button" onclick="toggleForgotPasswordModal()" class="text-xs text-pink-600 hover:underline font-semibold">Нууц үгээ мартсан уу?</button>
+            </div>
+            <button type="submit" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-pink-600/30 mt-2">
+                Нэвтрэх
+            </button>
+        </form>
+    </div>
+
+    <!-- REGISTER MODAL -->
+    <div id="registerOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden transition-opacity" onclick="toggleRegisterModal()"></div>
+    <div id="registerModal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-3xl shadow-2xl z-50 hidden p-8">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-2xl font-bold text-slate-900">Шинээр бүртгүүлэх</h3>
+            <button onclick="toggleRegisterModal()" class="text-slate-400 hover:text-slate-700 transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <form id="registerForm" onsubmit="requestRegisterCode(event)" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Эрхийн төрөл</label>
+                <select id="regRole" class="w-full px-4 py-3 bg-pink-50/50 border border-pink-100 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-pink-400 outline-none">
+                    <option value="customer">Харилцагч (Customer)</option>
+                    <option value="manager">Менежер (Manager)</option>
+                    <option value="admin">Админ (Admin)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Таны нэр</label>
+                <input type="text" id="regName" required placeholder="Нэр" class="w-full px-4 py-3 bg-pink-50/50 border border-pink-100 rounded-xl text-sm focus:ring-2 focus:ring-pink-400 outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase mb-2">И-мэйл хаяг</label>
+                <input type="email" id="regEmail" required placeholder="name@example.com" class="w-full px-4 py-3 bg-pink-50/50 border border-pink-100 rounded-xl text-sm focus:ring-2 focus:ring-pink-400 outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Нууц үг</label>
+                <input type="password" id="regPassword" required placeholder="••••••••" class="w-full px-4 py-3 bg-pink-50/50 border border-pink-100 rounded-xl text-sm focus:ring-2 focus:ring-pink-400 outline-none">
+            </div>
+            <button type="submit" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-pink-600/30 mt-2">
+                И-мэйл рүү код явуулах
+            </button>
+        </form>
+
+        <div id="verifySection" class="hidden space-y-4">
+            <div class="bg-pink-50 text-pink-700 p-4 rounded-xl text-xs font-medium">
+                И-мэйл хаяг руу баталгаажуулах код явууллаа.
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Баталгаажуулах 4 оронтой код</label>
+                <input type="text" id="verifyCodeInput" placeholder="1234" class="w-full px-4 py-3 bg-pink-50/50 border border-pink-100 rounded-xl text-center text-xl font-bold tracking-widest outline-none">
+            </div>
+            <button onclick="confirmRegistration()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3.5 rounded-xl transition">
+                Бүртгэл дуусгах
+            </button>
+        </div>
+    </div>
+
+    <!-- FORGOT PASSWORD MODAL -->
+    <div id="forgotOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden transition-opacity" onclick="toggleForgotPasswordModal()"></div>
+    <div id="forgotModal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-3xl shadow-2xl z-50 hidden p-8">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-2xl font-bold text-slate-900">Нууц үг сэргээх</h3>
+            <button onclick="toggleForgotPasswordModal()" class="text-slate-400 hover:text-slate-700 transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <form id="forgotForm" onsubmit="requestForgotCode(event)" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Бүртгэлтэй и-мэйл</label>
+                <input type="email" id="forgotEmail" required placeholder="name@example.com" class="w-full px-4 py-3 bg-pink-50/50 border border-pink-100 rounded-xl text-sm outline-none">
+            </div>
+            <button type="submit" class="w-full bg-pink-600 text-white font-semibold py-3.5 rounded-xl transition">Код илгээх</button>
+        </form>
+
+        <div id="forgotResetSection" class="hidden space-y-4 mt-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Сэргээх код</label>
+                <input type="text" id="forgotCodeInput" placeholder="1234" class="w-full px-4 py-3 bg-pink-50/50 border border-pink-100 rounded-xl text-center text-xl font-bold tracking-widest outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Шинэ нууц үг</label>
+                <input type="password" id="newPasswordInput" placeholder="••••••••" class="w-full px-4 py-3 bg-pink-50/50 border border-pink-100 rounded-xl text-sm outline-none">
+            </div>
+            <button onclick="confirmPasswordReset()" class="w-full bg-emerald-600 text-white font-semibold py-3.5 rounded-xl transition">Шинэчлэх</button>
+        </div>
+    </div>
+
+    <!-- SHOPPING CART & DELIVERY DRAWER -->
+    <div id="cartOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden transition-opacity" onclick="toggleCart()"></div>
+    <div id="cartDrawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="p-6 border-b border-pink-100 flex items-center justify-between">
+            <h3 class="text-xl font-bold text-slate-900">Таны сагс & Хүргэлт</h3>
+            <button onclick="toggleCart()" class="p-2 text-slate-400 hover:text-slate-700 transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        
+        <div id="cartItems" class="flex-1 overflow-y-auto p-6 space-y-4">
+            <div class="text-center text-slate-400 py-12">Таны сагс хоосон байна</div>
+        </div>
+
+        <div class="p-6 border-t border-pink-100 bg-pink-50/40 space-y-3">
+            <h4 class="text-xs font-bold text-slate-600 uppercase">Хүргэлт & Төлбөр</h4>
+            <input type="text" id="deliveryAddress" placeholder="Хүргэх хаяг (Дүүрэг, Хороо, Байр)" class="w-full px-3 py-2 bg-white border border-pink-200 rounded-xl text-xs outline-none">
+            <div class="grid grid-cols-2 gap-2">
+                <input type="date" id="deliveryDate" class="w-full px-3 py-2 bg-white border border-pink-200 rounded-xl text-xs outline-none">
+                <input type="time" id="deliveryTime" class="w-full px-3 py-2 bg-white border border-pink-200 rounded-xl text-xs outline-none">
+            </div>
+            
+            <div>
+                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Төлбөрийн нөхцөл</label>
+                <select id="paymentMethod" class="w-full px-3 py-2 bg-white border border-pink-200 rounded-xl text-xs outline-none font-semibold text-pink-700">
+                    <option value="QPay">QPay (QR код)</option>
+                    <option value="Card">Банкны карт (Online Card)</option>
+                    <option value="Cash">Бэлэн мөнгө (Cash on Delivery)</option>
+                </select>
+            </div>
+
+            <div class="flex justify-between pt-2 text-base font-semibold text-slate-700">
+                <span>Нийт дүн:</span>
+                <span id="cartTotal" class="text-pink-600 text-xl font-bold">₮0</span>
+            </div>
+            <button onclick="checkout()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-medium py-3.5 rounded-xl transition shadow-lg shadow-pink-600/30">Захиалга баталгаажуулах</button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 mt-20 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-xl font-bold text-white mb-2">Nkh.Flower 🌸</p>
+            <p class="text-sm">Бүх эрх хуулиар хамгаалагдсан. 2026.</p>
+        </div>
+    </footer>
+
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+</html>
